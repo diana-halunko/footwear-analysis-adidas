@@ -27,11 +27,14 @@
 
 ## Перебіг роботи
 
-### 1. Об'єднання таблиць
+<details>
+  <summary>### 1. Об'єднання таблиць
 На першому етапі я об'єднала три таблиці з різними аспектами продажу, використовуючи SQL-запити з **LEFT JOIN**. Це дозволило зібрати всі необхідні дані в одному запиті для подальшого аналізу.
 
 ```sql
 SELECT * 
 FROM shoes_fact
 LEFT JOIN country_dim USING (country_code)
-LEFT JOIN shoes_dim USING (id);
+LEFT JOIN shoes_dim USING (id);</summary>
+
+
