@@ -1,4 +1,4 @@
-# Shoe Sales Analysis
+# Adidas Webstore Sales Analysis
 
 ## Опис
 Цей проєкт займається аналізом даних продажів для компанії Adidas, базуючись на даних із [Adidas Webstore Shoe Data](https://www.kaggle.com/datasets/tamsnd/adidas-webstore-shoe-data?select=shoes_dim.csv) з Kaggle. Проєкт включає обробку, очищення та аналіз інформації про продажі взуття в веб-магазині Adidas, їхні ціни, категорії та популярність в залежності від країни та інших параметрів. Проєкт побудований на SQL-запитах і використовує базу даних PostgreSQL для зберігання та обробки даних.
@@ -28,20 +28,20 @@
 <details>
   <summary><h2>Перебіг роботи</h2></summary>
 
- ** 1. Об'єднання таблиць**  
+  **1. Об'єднання таблиць**  
    На першому етапі я об'єднала три таблиці з різними аспектами продажу, використовуючи SQL-запити з **LEFT JOIN**. Це дозволило зібрати всі необхідні дані в одному запиті для подальшого аналізу.
 
-    ```sql
+
     SELECT * 
     FROM shoes_fact
     LEFT JOIN country_dim USING (country_code)
     LEFT JOIN shoes_dim USING (id);
-    ```
 
- ** 2. Використання Common Table Expression (CTE)**  
-   Для зручності і ефективності я обгорнула попередній запит в Common Table Expression (CTE). Це дозволило уникнути дублювання запитів і зробило код більш читаємим.
 
-    ```sql
+ **2. Використання Common Table Expression (CTE)**  
+   Для зручності і ефективності я обгорнула попередній запит в Common Table Expression (CTE). Це дозволило уникнути дублювання запитів і зробило код легшим до прочитання.
+
+
     WITH common_table AS (
         SELECT * 
         FROM shoes_fact
@@ -50,7 +50,7 @@
     )
     SELECT * 
     FROM common_table;
-    ```
+
 
   <!-- Додай решту розділів тут -->
 
