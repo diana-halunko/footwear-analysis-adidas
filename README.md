@@ -25,16 +25,38 @@
 - **pgAdmin 4**: для керування базою даних PostgreSQL.
 - **Power BI/Tableau**: для візуалізації результатів аналізу (можна додати цей пункт, якщо плануєш використовувати візуалізацію).
 
-## Перебіг роботи
-
 <details>
-  <summary>### 1. Об'єднання таблиць
-На першому етапі я об'єднала три таблиці з різними аспектами продажу, використовуючи SQL-запити з **LEFT JOIN**. Це дозволило зібрати всі необхідні дані в одному запиті для подальшого аналізу.
+  <summary><h2>Перебіг роботи</h2></summary>
 
-```sql
-SELECT * 
-FROM shoes_fact
-LEFT JOIN country_dim USING (country_code)
-LEFT JOIN shoes_dim USING (id);</summary>
+  <details>
+    <summary>1. Об'єднання таблиць</summary>
+    На першому етапі я об'єднала три таблиці з різними аспектами продажу, використовуючи SQL-запити з **LEFT JOIN**. Це дозволило зібрати всі необхідні дані в одному запиті для подальшого аналізу.
 
+    ```sql
+    SELECT * 
+    FROM shoes_fact
+    LEFT JOIN country_dim USING (country_code)
+    LEFT JOIN shoes_dim USING (id);
+    ```
+  </details>
+  
+  <details>
+    <summary>2. Використання Common Table Expression (CTE)</summary>
+    Для зручності і ефективності я обгорнула попередній запит в Common Table Expression (CTE). Це дозволило уникнути дублювання запитів і зробило код більш читаємим.
+
+    ```sql
+    WITH common_table AS (
+        SELECT * 
+        FROM shoes_fact
+        LEFT JOIN country_dim USING (country_code)
+        LEFT JOIN shoes_dim USING (id)
+    )
+    SELECT * 
+    FROM common_table;
+    ```
+  </details>
+
+  <!-- Додай решту розділів тут -->
+
+</details>
 
