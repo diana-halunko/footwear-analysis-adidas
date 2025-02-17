@@ -35,8 +35,3 @@ SELECT *
 FROM shoes_fact
 LEFT JOIN country_dim USING (country_code)
 LEFT JOIN shoes_dim USING (id);
-
-## Інструкції для використання
-1. Клонуй цей репозиторій:
-   ```bash
-   git clone https://github.com/твій_нік/назва_репозиторію.git
