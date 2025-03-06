@@ -114,7 +114,7 @@ WITH filtered_common_table AS (
         ,shoes_fact.country_code
         ,shoes_fact.date
         ,shoes_fact.category
-        ,shoes_dim.use_purpose 
+        ,shoes_dim.best_for_wear 
         ,shoes_dim.gender
         ,shoes_dim.dominant_color
     FROM shoes_fact
@@ -130,7 +130,7 @@ WITH filtered_common_table AS (
         AND shoes_fact.country_code IS NOT NULL
         AND shoes_fact.date IS NOT NULL
         AND shoes_fact.category IS NOT NULL
-        AND shoes_dim.use_purpose IS NOT NULL
+        AND shoes_dim.best_for_wear IS NOT NULL
         AND shoes_dim.gender IS NOT NULL
         AND shoes_dim.dominant_color IS NOT NULL
 )
