@@ -138,7 +138,60 @@ WITH filtered_common_table AS (
 SELECT *
 FROM filtered_common_table;
 ```
+- **Робота з текстом**:
+1.Видалила дефіси з назв category
+  ```sql
+UPDATE shoes_fact
+SET category = REPLACE(category, '-', ' ');
+```
 
+
+2.Видалила частку us/... так як не бачу в ній практичного використання, коли є country code
+  ```sql
+UPDATE shoes_fact
+SET category = REPLACE(category, 'us/', '');
+```
+3.замінила _ на пробіли
+  ```sql
+UPDATE filtered_common_table
+SET category = REPLACE(category, '_', ' ');
+```
+4.була проблема з athleticsneakers. Рішення
+  ```sql
+UPDATE shoes_fact
+SET category = REPLACE(category, 'athleticsneakers', 'athletic sneakers')
+WHERE category = 'athleticsneakers';
+
+
+```
+
+видалення часточок shoes та sneakers зі значень колонки category 
+
+```sql
+UPDATE shoes_fact
+SET category = REPLACE(category, ' shoes', '')
+WHERE category LIKE '% shoes';
+```
+
+UPDATE shoes_fact
+SET category = REPLACE(category, ' sneakers', '')
+WHERE category LIKE '%sneakers';
+
+**Трансформування даних**<br>
+Зміна типу данних
+Для того щоб мати можливість працювати з значенням price(робити розрахунки, тощо)
+ я змінила тип данних з text на decimal
+
+```sql
+ALTER TABLE your_table_name
+ALTER COLUMN price TYPE numeric USING price::numeric;
+```
+
+Перейменування колонки date
+```sql
+ALTER TABLE shoes_fact
+RENAME COLUMN date TO order_date;
+```
 **5. Перейменування стовпця**<br>
 Щоб зробити дані зрозумілішими, я вирішила перейменувати стовпець best_for_wear на use_purpose. Це дозволило краще відобразити значення цього стовпця, адже **use_purpose** чіткіше показує мету використання взуття, ніж попередня назва.
 ```sql
@@ -195,8 +248,98 @@ UPDATE shoes_dim
 SET category = 'General'
 WHERE best_for_wear IN ('Comfort', 'Agility', 'Gravity', 'Stability', 'Control', 'Neutral', 'Accuracy');
 ```
-**4.**<br>
-**4.**<br>
+**Питання до данних**<br>
+10 моделей взуття, які продаються найкраще?
+  ```sql
+SELECT name, SUM(price) AS total_sales
+FROM filtered_common_table
+GROUP BY name
+ORDER BY total_sales DESC
+LIMIT 10;
+```
+Продажі по країнам: 
+ ```sql
+SELECT 
+	CASE country_code 
+	WHEN 'DE' THEN 'Germany' 
+	WHEN 'UK' THEN 'United Kingdom'
+	WHEN 'BE' THEN 'Belgium'
+	WHEN 'US' THEN 'United States'
+	ELSE 'Undifiended' END AS country,
+	ROUND(SUM(price),1) AS total_sales
+	,ROUND(100.0 * SUM(price) / SUM(SUM(price)) OVER (), 2) AS sales_percentage
+
+FROM filtered_common_table
+GROUP BY country,currency
+ORDER BY total_sales DESC;
+```
+
+Продажі по дням (датасет зовсім новий, є лише дані за січень 2025-го року)
+ ```sql
+SELECT 
+    date,
+    ROUND(SUM(price),2) AS total_sales
+FROM filtered_common_table
+GROUP BY date
+ORDER BY date;
+```
+Проценти з загальної кількості продажів по країнам
+ ```sql
+SELECT 
+    date,
+    ROUND(SUM(price), 2) AS total_sales,
+    ROUND(100.0 * SUM(CASE WHEN country_code = 'DE' THEN price ELSE 0 END) / SUM(price), 2) AS "DE",
+    ROUND(100.0 * SUM(CASE WHEN country_code = 'UK' THEN price ELSE 0 END) / SUM(price), 2) AS "UK",
+    ROUND(100.0 * SUM(CASE WHEN country_code = 'BE' THEN price ELSE 0 END) / SUM(price), 2) AS "BE",
+	ROUND(100.0 * SUM(CASE WHEN country_code = 'US' THEN price ELSE 0 END) / SUM(price),  2) AS "US"
+FROM filtered_common_table
+GROUP BY date
+ORDER BY date;
+```
+Показати обсяг продажів для кожної категорії взуття:
+ ```sql
+SELECT 
+    category AS "Тип взуття", 
+    ROUND(SUM(price), 2) AS "Total Sales", 
+    COUNT(id) AS "Number of Transactions"
+FROM filtered_common_table
+GROUP BY category
+ORDER BY "Total Sales" DESC;
+```
+додати розподіл за статтю (gender), щоб побачити різницю між продажами для чоловіків і жінок:
+ ```sql
+SELECT 
+    category AS "Тип взуття", 
+    gender AS "Стать",
+    ROUND(SUM(price), 2) AS "Total Sales", 
+    COUNT(id) AS "Number of Transactions"
+FROM filtered_common_table
+GROUP BY category, gender
+ORDER BY "Total Sales" DESC;
+```
+кількість проданих пар взуття по певній категорії та кількістю куплених моделей в кожному кольорі
+ ```sql
+SELECT 
+    category , 
+    dominant_color,
+    ROUND(SUM(price), 2) AS "Total Sales",
+    COUNT(id) AS "Number of Transactions"
+FROM filtered_common_table
+WHERE category='running-shoes'
+GROUP BY category, dominant_color
+ORDER BY "Total Sales" DESC;
+```
+
+кількість проданих пар взуття в загальному для кожного з кольорів
+ ```sql
+SELECT 
+    dominant_color AS "Основний колір",
+    ROUND(SUM(price), 2) AS "Total Sales",
+    COUNT(id) AS "Number of Transactions"
+FROM filtered_common_table
+GROUP BY dominant_color
+ORDER BY "Total Sales" DESC;
+```
 
 </details>
 
