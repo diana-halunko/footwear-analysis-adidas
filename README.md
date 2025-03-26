@@ -139,6 +139,7 @@ SELECT *
 FROM filtered_common_table;
 ```
 - **Робота з текстом**:
+  
 1.Видалила дефіси з назв category
   ```sql
 UPDATE shoes_fact
